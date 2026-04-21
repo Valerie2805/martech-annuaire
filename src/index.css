@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 44 33% 97%;
+  --paper: 44 25% 99%;
+  --ink: 240 15% 10%;
+  --muted: 240 6% 42%;
+  --line: 240 10% 86%;
+  --accent: 34 70% 45%;
+  --accent-2: 200 50% 34%;
+
+  color-scheme: light;
+  font-family: "Figtree Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: hsl(var(--ink));
+  background:
+    radial-gradient(1200px 800px at 8% 0%, hsla(var(--accent) / 0.12), transparent 58%),
+    radial-gradient(900px 600px at 92% 8%, hsla(var(--accent-2) / 0.10), transparent 55%),
+    linear-gradient(180deg, hsl(var(--bg)), hsl(44 30% 96%));
+}
+
+::selection {
+  background: hsla(var(--accent) / 0.25);
+}
+
+@layer utilities {
+  .font-editorial {
+    font-family: "Newsreader Variable", ui-serif, Georgia, serif;
+  }
+
+  .shadow-paper {
+    box-shadow:
+      0 1px 0 hsla(var(--ink) / 0.08),
+      0 12px 32px hsla(var(--ink) / 0.08);
+  }
+
+  .grid-paper {
+    background-image: linear-gradient(hsla(var(--ink) / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, hsla(var(--ink) / 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: -1px -1px;
+  }
+}
