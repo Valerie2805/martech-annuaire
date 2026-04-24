@@ -130,17 +130,30 @@ function mapToRows(dept: string, r: SearchResponse["results"][number]) {
 }
 
 export default async function handler(req: any, res: any) {
-  if (req.method !== "POST") return json(res, 405, { error: "method_not_allowed" })
+  const method = String(req.method || "").toUpperCase()
+  if (method !== "POST" && method !== "GET") return json(res, 405, { error: "method_not_allowed" })
 
   const url = process.env.SUPABASE_URL || ""
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || ""
   if (!url || !key) return json(res, 500, { error: "missing_supabase_env" })
 
   let body: ReqBody | null = null
-  try {
-    body = typeof req.body === "string" ? JSON.parse(req.body) : req.body
-  } catch {
-    return json(res, 400, { error: "invalid_json" })
+  if (method === "POST") {
+    try {
+      body = typeof req.body === "string" ? JSON.parse(req.body) : req.body
+    } catch {
+      return json(res, 400, { error: "invalid_json" })
+    }
+  } else {
+    const u = new URL(String(req.url || "/"), "http://localhost")
+    const department = u.searchParams.get("department") || u.searchParams.get("departement") || ""
+    const page = u.searchParams.get("page") || ""
+    const perPage = u.searchParams.get("perPage") || u.searchParams.get("per_page") || ""
+    body = {
+      department,
+      page: page ? Number(page) : undefined,
+      perPage: perPage ? Number(perPage) : undefined,
+    }
   }
 
   const department = String(body?.department || "").trim()
