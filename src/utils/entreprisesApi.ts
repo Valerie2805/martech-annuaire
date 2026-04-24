@@ -123,7 +123,7 @@ function mapToCompanies(dept: string, r: SearchResponse["results"][number]): Mar
 
 import { createClient } from "@supabase/supabase-js";
 
-// Assurez-vous que ces variables sont bien configurées dans Vercel (Settings > Environment Variables)
+
 const supabase = createClient(
   process.env.SUPABASE_URL || "",
   process.env.SUPABASE_ANON_KEY || ""
