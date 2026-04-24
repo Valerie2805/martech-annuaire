@@ -122,7 +122,7 @@ function mapToCompanies(dept: string, r: SearchResponse["results"][number]): Mar
 }
 
 export async function fetchEnterprisesByDepartment(dept: string, page: number, perPage: number) {
-  const url = new URL("/api/recherche-entreprises/search", window.location.origin)
+  const url = new URL("/api/sync/department", window.location.origin)
   url.searchParams.set("departement", dept)
   url.searchParams.set("page", String(page))
   url.searchParams.set("per_page", String(perPage))

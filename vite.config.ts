@@ -8,10 +8,10 @@ function govApiProxyPlugin() {
     server.middlewares.use(async (req: any, res: any, next: any) => {
       try {
         const url = req.url || ""
-        if (!url.startsWith("/api/recherche-entreprises/")) return next()
+        if (url.startsWith("/api/sync/department")) return next()
 
         const u = new URL(url, "http://localhost")
-        const upstreamPath = u.pathname.replace(/^\/api\/recherche-entreprises/, "")
+        const upstreamPath = u.pathname.replace(/^\/api\/sync\/department/, "")
         const upstreamUrl = `https://recherche-entreprises.api.gouv.fr${upstreamPath}${u.search}`
 
         const upstreamRes = await fetch(upstreamUrl, {
