@@ -121,32 +121,37 @@ function mapToCompanies(dept: string, r: SearchResponse["results"][number]): Mar
   return companies
 }
 
-export async function fetchEnterprisesByDepartment(dept: string, page: number, perPage: number) {
-  const url = new URL("/api/sync/department", window.location.origin)
-  url.searchParams.set("departement", dept)
-  url.searchParams.set("page", String(page))
-  url.searchParams.set("per_page", String(perPage))
+import { createClient } from "@supabase/supabase-js";
 
-  let lastError: unknown = null
-  for (let i = 0; i < 6; i++) {
-    try {
-      const res = await fetch(url.toString(), { headers: { Accept: "application/json" } })
-      if (res.status === 429) {
-        await sleep(600 * (i + 1))
-        continue
-      }
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const data = (await res.json()) as SearchResponse
-      const items = data.results.flatMap((r) => mapToCompanies(dept, r))
-      return {
-        items,
-        meta: {
-          totalResults: data.total_results,
-          page: data.page,
-          perPage: data.per_page,
-          totalPages: data.total_pages,
-        },
-      }
+// Assurez-vous que ces variables sont bien configurées dans Vercel (Settings > Environment Variables)
+const supabase = createClient(
+  process.env.SUPABASE_URL || "",
+  process.env.SUPABASE_ANON_KEY || ""
+);
+
+export async function fetchEnterprisesByDepartment(dept: string, page: number, perPage: number) {
+  const from = (page - 1) * perPage;
+  const to = from + perPage - 1;
+
+  // Requête directe vers votre base Supabase
+  const { data, count, error } = await supabase
+    .from("companies")
+    .select("*", { count: "exact" })
+    .eq("department", dept)
+    .range(from, to);
+
+  if (error) throw error;
+
+  return {
+    items: data || [],
+    meta: {
+      totalResults: count || 0,
+      page: page,
+      perPage: perPage,
+      totalPages: Math.ceil((count || 0) / perPage),
+    },
+  };
+}
     } catch (e) {
       lastError = e
       await sleep(400 * (i + 1))
